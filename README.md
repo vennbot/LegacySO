@@ -6,6 +6,8 @@ FreeSO currently depends on the original game files (objects, avatars, ui) to fu
 
 LegacySO looks to maintain the core experience of FreeSO whilst keeping the door open to a continuation of its mission in the future. For more information please visit our website at https://legacyso.org
 
+![image](https://legacyso.org/wp-content/uploads/2025/06/blog-feature.png)
+
 # Disclaimer and Attribution
 
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -22,9 +24,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     - Other changes documented in commit history and project README.
 
     Credit is retained for the original FreeSO project and its contributors.
-
-
-![image](https://legacyso.org/wp-content/uploads/2025/06/blog-feature.png)
 
 ## Prerequisites
 * [Visual Studio 2019](https://visualstudio.microsoft.com/vs/)
