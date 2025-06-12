@@ -1,0 +1,94 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
+
+/*
+    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
+    Original Author(s): The FreeSO Development Team
+
+    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
+    - Adjusted to support self-hosted LegacySO servers.
+    - Modified to allow the LegacySO game client to connect to a predefined server by default.
+    - Gameplay logic changes for a balanced and fair experience.
+    - Updated references from "FreeSO" to "LegacySO" where appropriate.
+    - Other changes documented in commit history and project README.
+
+    Credit is retained for the original FreeSO project and its contributors.
+*/
+using FSO.Files.Formats.IFF.Chunks;
+using FSO.SimAntics.Engine;
+using System;
+using System.Collections.Generic;
+
+namespace FSO.IDE.EditorComponent.OperandForms.DataProviders
+{
+    public abstract class OpNamedPropertyProvider : OpDataProvider
+    {
+        public abstract Dictionary<int, string> GetNamedProperties(EditorScope scope, VMPrimitiveOperand op);
+    }
+
+    public class OpStaticNamedPropertyProvider : OpNamedPropertyProvider
+    {
+        private Dictionary<int, string> Map;
+
+        public OpStaticNamedPropertyProvider(Dictionary<int, string> map)
+        {
+            Map = map;
+        }
+
+        public OpStaticNamedPropertyProvider(Type num)
+        {
+            Map = new Dictionary<int, string>();
+            var vals = Enum.GetValues(num);
+            var names = Enum.GetNames(num);
+            var i = 0;
+            foreach (var val in vals)
+            {
+                if (!Map.ContainsKey(Convert.ToInt32(val)))
+                    Map.Add(Convert.ToInt32(val), names[i]);
+                i++;
+            }
+        }
+
+        public OpStaticNamedPropertyProvider(List<ScopeDataDefinition> str)
+        {
+            Map = new Dictionary<int, string>();
+            for (int i = 0; i < str.Count; i++)
+            {
+                Map.Add(str[i].Value, str[i].Name);
+            }
+        }
+
+        public OpStaticNamedPropertyProvider(string[] str, int startValue)
+        {
+            Map = new Dictionary<int, string>();
+            for (int i = 0; i < str.Length; i++)
+            {
+                Map.Add(i + startValue, str[i]);
+            }
+        }
+
+        public OpStaticNamedPropertyProvider(STR strRes, int startValue)
+        {
+            Map = new Dictionary<int, string>();
+            for (int i=0; i<strRes.Length; i++)
+            {
+                Map.Add(i + startValue, strRes.GetString(i));
+            }
+        }
+
+        public OpStaticNamedPropertyProvider(STR strRes) : this(strRes, 0) { }
+
+        public void EnsureProperty(int value, string name)
+        {
+            if (!Map.ContainsKey(value))
+            {
+                Map[value] = name;
+            }
+        }
+
+        public override Dictionary<int, string> GetNamedProperties(EditorScope scope, VMPrimitiveOperand op)
+        {
+            return Map;
+        }
+    }
+}

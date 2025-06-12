@@ -1,0 +1,194 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
+
+/*
+    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
+    Original Author(s): The FreeSO Development Team
+
+    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
+    - Adjusted to support self-hosted LegacySO servers.
+    - Modified to allow the LegacySO game client to connect to a predefined server by default.
+    - Gameplay logic changes for a balanced and fair experience.
+    - Updated references from "FreeSO" to "LegacySO" where appropriate.
+    - Other changes documented in commit history and project README.
+
+    Credit is retained for the original FreeSO project and its contributors.
+*/
+using FSO.Common.DatabaseService;
+using FSO.Common.DatabaseService.Framework;
+using FSO.Common.DataService;
+using FSO.Common.DataService.Framework;
+using FSO.Common.Serialization;
+using FSO.Server.Clients;
+using FSO.Server.Protocol.Voltron.DataService;
+using Ninject.Activation;
+using Ninject.Modules;
+using System;
+
+namespace FSO.Client.Network
+{
+    public class NetworkModule : NinjectModule
+    {
+        public override void Load(){
+            Bind<AuthClient>().ToProvider<AuthClientProvider>().InSingletonScope();
+            Bind<CityClient>().ToProvider<CityClientProvider>().InSingletonScope();
+            Bind<AriesClient>().To<AriesClient>().InSingletonScope().Named("City");
+            Bind<AriesClient>().To<AriesClient>().InSingletonScope().Named("Lot");
+            Bind<cTSOSerializer>().ToProvider<cTSOSerializerProvider>().InSingletonScope();
+
+            Bind<IModelSerializer>().ToProvider<ModelSerializerProvider>().InSingletonScope();
+            Bind<ISerializationContext>().To<SerializationContext>();
+
+            Bind<IDatabaseService>().To<DatabaseService>().InSingletonScope();
+            Bind<IClientDataService>().To<ClientDataService>().InSingletonScope();
+            Bind<Network>().To<Network>().InSingletonScope();
+        }
+    }
+
+    class ModelSerializerProvider : IProvider<IModelSerializer>
+    {
+        private Content.Content Content;
+
+        public ModelSerializerProvider(Content.Content content)
+        {
+            this.Content = content;
+        }
+
+        public Type Type
+        {
+            get
+            {
+                return typeof(IModelSerializer);
+            }
+        }
+
+        public object Create(IContext context)
+        {
+            var serializer = new ModelSerializer();
+            serializer.AddTypeSerializer(new DatabaseTypeSerializer());
+            serializer.AddTypeSerializer(new DataServiceModelTypeSerializer(Content.DataDefinition));
+            serializer.AddTypeSerializer(new DataServiceModelVectorTypeSerializer(Content.DataDefinition));
+            return serializer;
+        }
+    }
+
+    class cTSOSerializerProvider : IProvider<cTSOSerializer>
+    {
+        private Content.Content Content;
+
+        public cTSOSerializerProvider(Content.Content content)
+        {
+            this.Content = content;
+        }
+
+        public Type Type
+        {
+            get
+            {
+                return typeof(cTSOSerializer);
+            }
+        }
+
+        public object Create(IContext context)
+        {
+            return new cTSOSerializer(this.Content.DataDefinition);
+        }
+    }
+
+    public class AuthClientProvider : IProvider<AuthClient>
+    {
+        private Content.Content Content;
+
+        public AuthClientProvider(Content.Content content){
+            this.Content = content;
+        }
+
+        public Type Type
+        {
+            get
+            {
+                return typeof(AuthClient);
+            }
+        }
+
+        public object Create(IContext context)
+        {
+            if (GlobalSettings.Default.UseCustomServer)
+            {
+                return new AuthClient(GlobalSettings.Default.GameEntryUrl);
+            }
+            else
+            {
+                var authClientConfig = Content.Ini.Get("gameentry.ini");
+                var serverAddress = authClientConfig["Auth"]["Server"];
+                if (serverAddress.IndexOf(",") != -1)
+                {
+                    //Choose the first
+                    serverAddress = serverAddress.Substring(0, serverAddress.IndexOf(","));
+                }
+
+                if (serverAddress.IndexOf("://") == -1)
+                {
+                    //Default to https
+                    serverAddress = "https://" + serverAddress;
+                }
+
+                return new AuthClient(serverAddress);
+            }
+        }
+    }
+
+
+    public class CityClientProvider : IProvider<CityClient>
+    {
+        private Content.Content Content;
+
+        public CityClientProvider(Content.Content content)
+        {
+            this.Content = content;
+        }
+
+        public Type Type
+        {
+            get
+            {
+                return typeof(CityClient);
+            }
+        }
+
+        public object Create(IContext context)
+        {
+            if (GlobalSettings.Default.UseCustomServer)
+            {
+                return new CityClient(GlobalSettings.Default.CitySelectorUrl);
+            }
+            else
+            {
+                var cityClientConfig = Content.Ini.Get("cityselector.ini");
+                var serverAddress = cityClientConfig["CitySelector"]["ServerName"];
+                if (serverAddress.IndexOf(",") != -1)
+                {
+                    //Choose the first
+                    serverAddress = serverAddress.Substring(0, serverAddress.IndexOf(","));
+                }
+
+                var port = int.Parse(cityClientConfig["CitySelector"]["ServerPort"]);
+
+                if (serverAddress.IndexOf("://") == -1)
+                {
+                    if (port == 80)
+                    {
+                        serverAddress = "http://" + serverAddress;
+                    }
+                    else
+                    {
+                        //Default to https
+                        serverAddress = "https://" + serverAddress;
+                    }
+                }
+
+                return new CityClient(serverAddress);
+            }
+        }
+    }
+}

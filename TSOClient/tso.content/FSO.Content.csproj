@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C0068DF7-F2E8-4399-846D-556BF9A35C00}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FSO.Content</RootNamespace>
+    <AssemblyName>FSO.Content</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ServerRelease|x86'">
+    <OutputPath>bin\x86\ServerRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ServerRelease|AnyCPU'">
+    <OutputPath>bin\ServerRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio.cs" />
+    <Compile Include="AvatarAnimationProvider.cs" />
+    <Compile Include="AvatarAppearanceProvider.cs" />
+    <Compile Include="AvatarBindingProvider.cs" />
+    <Compile Include="AvatarCollectionsProvider.cs" />
+    <Compile Include="AvatarOutfitProvider.cs" />
+    <Compile Include="AvatarPurchasables.cs" />
+    <Compile Include="AvatarSkeletonProvider.cs" />
+    <Compile Include="AvatarThumbnailProvider.cs" />
+    <Compile Include="AvatarTextureProvider.cs" />
+    <Compile Include="ChangeManager.cs" />
+    <Compile Include="Codecs\AnimationCodec.cs" />
+    <Compile Include="Codecs\AppearanceCodec.cs" />
+    <Compile Include="Codecs\CFPCodec.cs" />
+    <Compile Include="Codecs\BCFCodec.cs" />
+    <Compile Include="Codecs\BindingCodec.cs" />
+    <Compile Include="Codecs\CMXCodex.cs" />
+    <Compile Include="Codecs\CollectionCodec.cs" />
+    <Compile Include="Codecs\HandgroupCodec.cs" />
+    <Compile Include="Codecs\IffCodec.cs" />
+    <Compile Include="Codecs\IniCodec.cs" />
+    <Compile Include="Codecs\BMFCodec.cs" />
+    <Compile Include="Codecs\MeshCodec.cs" />
+    <Compile Include="Codecs\OTFCodec.cs" />
+    <Compile Include="Codecs\OutfitCodec.cs" />
+    <Compile Include="Codecs\PurchasableOutfitCodec.cs" />
+    <Compile Include="Codecs\SFXCodec.cs" />
+    <Compile Include="Codecs\SkeletonCodec.cs" />
+    <Compile Include="Codecs\SKNCodec.cs" />
+    <Compile Include="Codecs\SmartCodec.cs" />
+    <Compile Include="Codecs\TextureCodec.cs" />
+    <Compile Include="ContentPreloader.cs" />
+    <Compile Include="Framework\CompositeProvider.cs" />
+    <Compile Include="Framework\FAR1Provider.cs" />
+    <Compile Include="Framework\FAR3Provider.cs" />
+    <Compile Include="Framework\FileProvider.cs" />
+    <Compile Include="Framework\IContentCodec.cs" />
+    <Compile Include="Framework\PackingslipProvider.cs" />
+    <Compile Include="Content.cs" />
+    <Compile Include="AvatarMeshProvider.cs" />
+    <Compile Include="Framework\RuntimeProvider.cs" />
+    <Compile Include="Framework\TS1Provider.cs" />
+    <Compile Include="Framework\TSOAvatarContentProvider.cs" />
+    <Compile Include="HandgroupProvider.cs" />
+    <Compile Include="IniProvider.cs" />
+    <Compile Include="CityMapsProvider.cs" />
+    <Compile Include="Interfaces\AbstractObjectProvider.cs" />
+    <Compile Include="Interfaces\IAudioProvider.cs" />
+    <Compile Include="Interfaces\IObjectCatalog.cs" />
+    <Compile Include="Interfaces\IObjectProvider.cs" />
+    <Compile Include="Model\AudioReference.cs" />
+    <Compile Include="Model\AudioType.cs" />
+    <Compile Include="Model\CityMap.cs" />
+    <Compile Include="Model\HITEventRegistration.cs" />
+    <Compile Include="Model\HITResourceGroup.cs" />
+    <Compile Include="Model\RackOutfit.cs" />
+    <Compile Include="Model\RackOutfits.cs" />
+    <Compile Include="Model\TextureRef.cs" />
+    <Compile Include="Model\WallStyle.cs" />
+    <Compile Include="Model\Floor.cs" />
+    <Compile Include="Model\Wall.cs" />
+    <Compile Include="RackOutfitsProvider.cs" />
+    <Compile Include="RCMeshProvider.cs" />
+    <Compile Include="ResAction.cs" />
+    <Compile Include="TS1\CustomUIProvider.cs" />
+    <Compile Include="TS1\TS1Audio.cs" />
+    <Compile Include="TS1\TS1AvatarTextureProvider.cs" />
+    <Compile Include="TS1\TS1BCFProvider.cs" />
+    <Compile Include="TS1\TS1BMFProvider.cs" />
+    <Compile Include="TS1\TS1JobProvider.cs" />
+    <Compile Include="TS1\TS1NeighbourProvider.cs" />
+    <Compile Include="TS1\TS1ObjectProvider.cs" />
+    <Compile Include="Upgrades\Model\ObjectUpgradeConfig.cs" />
+    <Compile Include="Upgrades\Model\Runtime\RuntimeTuningGroup.cs" />
+    <Compile Include="Upgrades\Model\Runtime\RuntimeUpgradeFile.cs" />
+    <Compile Include="Upgrades\Model\UpgradeGroup.cs" />
+    <Compile Include="Upgrades\Model\UpgradeIff.cs" />
+    <Compile Include="Upgrades\Model\UpgradeLevel.cs" />
+    <Compile Include="Upgrades\Model\UpgradesFile.cs" />
+    <Compile Include="Upgrades\Model\UpgradeSubstitution.cs" />
+    <Compile Include="Upgrades\ObjectUpgradeProvider.cs" />
+    <Compile Include="WorldFloorProvider.cs" />
+    <Compile Include="WorldGlobalProvider.cs" />
+    <Compile Include="WorldObjectCatalog.cs" />
+    <Compile Include="WorldObjectGlobals.cs" />
+    <Compile Include="WorldObjectProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UIGraphicsProvider.cs" />
+    <Compile Include="WorldRoofProvider.cs" />
+    <Compile Include="WorldWallProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Other\libs\TargaImagePCL\TargaImagePCL.csproj">
+      <Project>{d8232422-9d79-4200-a981-eb70ed82ccf3}</Project>
+      <Name>TargaImagePCL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\tso.common\FSO.Common.csproj">
+      <Project>{C42962A1-8796-4F47-9DCD-79ED5904D8CA}</Project>
+      <Name>FSO.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\tso.files\FSO.Files.csproj">
+      <Project>{18583453-A970-4AC5-83B1-2D6BFDF94C24}</Project>
+      <Name>FSO.Files</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\tso.vitaboy.model\FSO.Vitaboy.csproj">
+      <Project>{9D9558A9-755E-43F9-8BB6-B26F365F5042}</Project>
+      <Name>FSO.Vitaboy</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <Content Include="Content\UIScript.egt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UI\emojis.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UI\customemojis.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\UI\LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\3D\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\MeshReplace\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Textures\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\iOS\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\DX\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\OGL\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bboxCache.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="ContentSrc\**\*.*" />
+    <None Include="packages.config" />
+    <None Include="Readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\DX\Textures\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

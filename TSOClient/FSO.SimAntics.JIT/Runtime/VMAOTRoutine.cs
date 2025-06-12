@@ -1,0 +1,54 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
+
+/*
+    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
+    Original Author(s): The FreeSO Development Team
+
+    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
+    - Adjusted to support self-hosted LegacySO servers.
+    - Modified to allow the LegacySO game client to connect to a predefined server by default.
+    - Gameplay logic changes for a balanced and fair experience.
+    - Updated references from "FreeSO" to "LegacySO" where appropriate.
+    - Other changes documented in commit history and project README.
+
+    Credit is retained for the original FreeSO project and its contributors.
+*/
+using FSO.SimAntics.Engine;
+
+namespace FSO.SimAntics.JIT.Runtime
+{
+    public class VMAOTRoutine : VMRoutine
+    {
+        private IBHAV Function;
+
+        public VMAOTRoutine(IBHAV func) : base()
+        {
+            Function = func;
+        }
+
+        public override VMPrimitiveExitCode Execute(VMStackFrame frame, out VMInstruction instruction)
+        {
+            var result = Function.Execute(frame, ref frame.InstructionPointer);
+            instruction = frame.GetCurrentInstruction();
+            return result;
+        }
+    }
+
+    public class VMAOTInlineRoutine : VMRoutine
+    {
+        private IInlineBHAV Function;
+
+        public VMAOTInlineRoutine(IInlineBHAV func) : base()
+        {
+            Function = func;
+        }
+
+        public override VMPrimitiveExitCode Execute(VMStackFrame frame, out VMInstruction instruction)
+        {
+            var result = Function.Execute(frame, ref frame.InstructionPointer, frame.Args);
+            instruction = frame.GetCurrentInstruction();
+            return result ? VMPrimitiveExitCode.RETURN_TRUE : VMPrimitiveExitCode.RETURN_FALSE;
+        }
+    }
+}

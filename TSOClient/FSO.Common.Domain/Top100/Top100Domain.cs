@@ -1,0 +1,90 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
+
+/*
+    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
+    Original Author(s): The FreeSO Development Team
+
+    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
+    - Adjusted to support self-hosted LegacySO servers.
+    - Modified to allow the LegacySO game client to connect to a predefined server by default.
+    - Gameplay logic changes for a balanced and fair experience.
+    - Updated references from "FreeSO" to "LegacySO" where appropriate.
+    - Other changes documented in commit history and project README.
+
+    Credit is retained for the original FreeSO project and its contributors.
+*/
+using FSO.Common.Enum;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace FSO.Common.Domain.Top100
+{
+    public class Top100Domain : ITop100Domain
+    {
+        private List<Top100CategoryEntry> _Categories;
+
+        public Top100Domain()
+        {
+            _Categories = new List<Top100CategoryEntry>();
+
+
+            var lotCategories = new Top100Category[] { Top100Category.lot_money, Top100Category.lot_offbeat, Top100Category.lot_romance, Top100Category.lot_services, Top100Category.lot_shopping,
+                                                    Top100Category.lot_skills, Top100Category.lot_welcome, Top100Category.lot_games, Top100Category.lot_entertainment, Top100Category.lot_residence};
+            var lotLabels = new string[] { "Money", "Offbeat", "Romance", "Services", "Shopping", "Skills", "Welcome", "Games", "Entertainment", "Residence" };
+
+            for(var i=0; i < lotCategories.Length; i++)
+            {
+                _Categories.Add(new Top100CategoryEntry {
+                    Id = (uint)lotCategories[i],
+                    Category = lotCategories[i],
+                    CategoryType = Top100CategoryType.LOT,
+                    Name = lotLabels[i]
+                });
+            }
+
+            var avatarCategories = new Top100Category[] {
+                Top100Category.avatar_most_famous,
+                Top100Category.avatar_best_karma,
+                Top100Category.avatar_friendliest,
+                Top100Category.avatar_most_infamous,
+                Top100Category.avatar_meanest
+            };
+            var avatarLabels = new string[] { "Most Famous", "Best Karma", "Friendliest", "Most Infamous", "Meanest" };
+
+            for(var i=0; i < avatarCategories.Length; i++)
+            {
+                _Categories.Add(new Top100CategoryEntry
+                {
+                    Id = (uint)avatarCategories[i],
+                    Category = avatarCategories[i],
+                    CategoryType = Top100CategoryType.AVATAR,
+                    Name = avatarLabels[i]
+                });
+            }
+        }
+
+        public IEnumerable<Top100CategoryEntry> Categories
+        {
+            get { return _Categories; }
+        }
+
+        public Top100CategoryEntry Get(uint id)
+        {
+            return Get((Top100Category)id);
+        }
+
+        public Top100CategoryEntry Get(Top100Category category)
+        {
+            return _Categories.FirstOrDefault(x => x.Category == category);
+        }
+    }
+
+    public class Top100CategoryEntry
+    {
+        public uint Id;
+        public Top100Category Category;
+        public Top100CategoryType CategoryType;
+        public string Name;
+    }
+}

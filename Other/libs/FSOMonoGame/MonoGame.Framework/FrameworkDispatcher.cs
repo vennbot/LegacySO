@@ -1,0 +1,64 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
+
+/*
+    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
+    Original Author(s): The FreeSO Development Team
+
+    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
+    - Adjusted to support self-hosted LegacySO servers.
+    - Modified to allow the LegacySO game client to connect to a predefined server by default.
+    - Gameplay logic changes for a balanced and fair experience.
+    - Updated references from "FreeSO" to "LegacySO" where appropriate.
+    - Other changes documented in commit history and project README.
+
+    Credit is retained for the original FreeSO project and its contributors.
+*/
+// MonoGame - Copyright (C) The MonoGame Team
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.txt', which is part of this source code package.
+
+using System;
+using Microsoft.Xna.Framework.Audio;
+
+namespace Microsoft.Xna.Framework
+{
+    /// <summary>
+    /// Helper class for processing internal framework events.
+    /// </summary>
+    /// <remarks>
+    /// If you use <see cref="Game"/> class, <see cref="Update()"/> is called automatically.
+    /// Otherwise you must call it as part of your game loop.
+    /// </remarks>
+    public static class FrameworkDispatcher
+    {
+        private static bool _initialized = false;
+
+        /// <summary>
+        /// Processes framework events.
+        /// </summary>
+        public static void Update()
+        {
+            if (!_initialized)
+                Initialize();
+
+            DoUpdate();
+        }
+
+        private static void DoUpdate()
+        {
+            DynamicSoundEffectInstanceManager.UpdatePlayingInstances();
+            SoundEffectInstancePool.Update();
+            Microphone.UpdateMicrophones();
+        }
+
+        private static void Initialize()
+        {
+            // Initialize sound system
+            SoundEffect.InitializeSoundEffect();
+
+            _initialized = true;
+        }
+    }
+}
+

@@ -1,0 +1,92 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
+
+/*
+    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
+    Original Author(s): The FreeSO Development Team
+
+    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
+    - Adjusted to support self-hosted LegacySO servers.
+    - Modified to allow the LegacySO game client to connect to a predefined server by default.
+    - Gameplay logic changes for a balanced and fair experience.
+    - Updated references from "FreeSO" to "LegacySO" where appropriate.
+    - Other changes documented in commit history and project README.
+
+    Credit is retained for the original FreeSO project and its contributors.
+*/
+namespace FSO.SimAntics.JIT.Translation.Model
+{
+    public enum SharedPrimitives : byte
+    {
+        Sleep = 0,
+        GenericSimsCall = 1,
+        Expression = 2,
+        TSOReportMetric = 3, TS1FindBestAction = 3,
+        Grab = 4,
+        Drop = 5,
+        ChangeSuitAccessory = 6,
+        Refresh = 7,
+        RandomNumber = 8,
+        Burn = 9,
+        Sims1Tutorial = 10,
+        GetDistanceTo = 11,
+        GetDirectionTo = 12,
+        PushInteraction = 13,
+        FindBestObjectForFunction = 14,
+        Breakpoint = 15,
+        FindLocationFor = 16,
+        IdleForInput = 17,
+        RemoveObjectInstance = 18,
+        MakeNewCharacter = 19,
+        RunFunctionalTree = 20,
+        ShowString = 21,
+        LookTowards = 22,
+        PlaySoundEvent = 23,
+        OldRelationship = 24,
+        TSOTransferFunds = 25, TS1AlterBudget = 26,
+        Relationship = 26,
+        GoToRelativePosition = 27,
+        RunTreeByName = 28,
+        SetMotiveChange = 29,
+        TSOSyslog = 30, TS1GosubFoundAction = 30,
+        SetToNext = 31,
+        TestObjectType = 32,
+        Find5WorstMotives = 33,
+        UIEffect = 34,
+        SpecialEffect = 35,
+        DialogPrivateStrings = 36,
+        TestSimInteracting = 37,
+        DialogGlobalStrings = 38,
+        DialogSemiglobalStrings = 39,
+        OnlineJobsCall = 40,
+        SetBalloonHeadline = 41,
+        CreateNewObjectInstance = 42,
+        DropOnto = 43,
+        AnimateSim = 44,
+        GoToRoutingSlot = 45,
+        Snap = 46,
+        Reach = 47,
+        StopAllSounds = 48,
+        NotifyStackObjectOutOfIdle = 49,
+        AddChangeActionString = 50,
+        TS1ManageInventory = 51, //no tso
+        TS1ChangeLightColor = 52,
+        TS1ChangeSunColor = 53,
+        TS1PointLightAtObject = 54,
+        TSOSyncField = 55,
+        TSOOwnership = 56,
+        TSOStartPersistDialog = 57,
+        TSOEndPersistDialog = 58,
+        TSOUpdatePersistDialog = 59,
+        TSOPollPersistDialog = 60,
+        TSOSendMaxisLetter = 61,
+        TSOInvokePlugin = 62,
+        TSOGetTerrainInfo = 63,
+        TSOLeaveLotAndGoto = 64,
+        TSOFindBestAction = 65,
+        TSOSetDynamicObjectName = 66,
+        TSOInventoryOperations = 67,
+
+        Subroutine = 255
+    }
+}

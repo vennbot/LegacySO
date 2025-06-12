@@ -1,0 +1,42 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
+
+/*
+    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
+    Original Author(s): The FreeSO Development Team
+
+    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
+    - Adjusted to support self-hosted LegacySO servers.
+    - Modified to allow the LegacySO game client to connect to a predefined server by default.
+    - Gameplay logic changes for a balanced and fair experience.
+    - Updated references from "FreeSO" to "LegacySO" where appropriate.
+    - Other changes documented in commit history and project README.
+
+    Credit is retained for the original FreeSO project and its contributors.
+*/
+using FSO.Content.Framework;
+using FSO.Vitaboy;
+using FSO.Files.Utils;
+
+namespace FSO.Content.Codecs
+{
+    /// <summary>
+    /// Codec for meshes (*.mesh).
+    /// </summary>
+    public class MeshCodec : IContentCodec<Mesh>
+    {
+        #region IContentCodec<Mesh> Members
+
+        public override object GenDecode(System.IO.Stream stream)
+        {
+            var mesh = new Mesh();
+            using (var io = IoBuffer.FromStream(stream, ByteOrder.BIG_ENDIAN))
+            {
+                mesh.Read(io, false);
+            }
+            return mesh;
+        }
+
+        #endregion
+    }
+}

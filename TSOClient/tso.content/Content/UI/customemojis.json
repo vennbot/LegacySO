@@ -1,0 +1,57 @@
+{
+  "rip": {
+    "keywords": [ "death", "sims", "tombstone" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/rip.png",
+    "category": "custom"
+  },
+  "rel_plus": {
+    "keywords": [ "sims", "relationship", "friendship", "positive" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/relplus.png",
+    "category": "custom"
+  },
+  "rel_minus": {
+    "keywords": [ "sims", "relationship", "friendship", "negative", "enemy" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/relminus.png",
+    "category": "custom"
+  },
+  "hc": {
+    "keywords": [ "sims", "food", "cooking", "home", "salisbury", "steak" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/hc.png",
+    "category": "custom"
+  },
+  "tso": {
+    "keywords": [ "sims", "online", "the" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/tso.png",
+    "category": "custom"
+  },
+  "wall": {
+    "keywords": [ "sims", "build", "mode" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/wall.png",
+    "category": "custom"
+  },
+  "tsomania": {
+    "keywords": [ "sims", "tso", "mania" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/tsomania.png",
+    "category": "custom"
+  },
+  "leak": {
+    "keywords": [ "sims", "leak", "gopher", "wtf" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/leak.png",
+    "category": "custom"
+  },
+  "joyfuljams": {
+    "keywords": [ "jams", "joy", "wtf", "lool" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/joyfuljams.png",
+    "category": "custom"
+  },
+  "uwot": {
+    "keywords": [ "wtf", "huh", "wot", "what", "eh" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/uwot.png",
+    "category": "custom"
+  },
+  "forcefire": {
+    "keywords": [ "fire", "burn", "death", "rip" ],
+    "url": "https://legacyso.org/wp-content/uploads/2025/06/forcefire.png",
+    "category": "custom"
+  }
+}

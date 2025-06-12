@@ -1,0 +1,38 @@
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
+
+/*
+    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
+    Original Author(s): The FreeSO Development Team
+
+    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
+    - Adjusted to support self-hosted LegacySO servers.
+    - Modified to allow the LegacySO game client to connect to a predefined server by default.
+    - Gameplay logic changes for a balanced and fair experience.
+    - Updated references from "FreeSO" to "LegacySO" where appropriate.
+    - Other changes documented in commit history and project README.
+
+    Credit is retained for the original FreeSO project and its contributors.
+*/
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace TSOClient.Network
+{
+    public enum PacketType
+    {
+        LOGIN_REQUEST = 0x00,
+        LOGIN_NOTIFY = 0x01,
+        LOGIN_FAILURE = 0x02,
+        CHARACTER_LIST = 0x05,
+        CITY_LIST = 0x06,
+        CHARACTER_CREATE = 0x07,
+
+        CHARACTER_CREATE_CITY = 0x64,
+        CHARACTER_CREATE_CITY_FAILED = 0x65,
+        REQUEST_CITY_TOKEN = 0x66,
+        CITY_TOKEN = 0x67
+    }
+}
