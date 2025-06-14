@@ -56,11 +56,11 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/client'
-    ArtifactName: 'FreeSOClient'
+    ArtifactName: 'LegacySOClient'
     publishLocation: 'Container'
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/server'
-    ArtifactName: 'FreeSOServer'
+    ArtifactName: 'LegacySOServer'
     publishLocation: 'Container'
