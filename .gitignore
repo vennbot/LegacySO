@@ -29,6 +29,7 @@ TSOClient/FSO.Server/config.json
 # Mono user-specific files
 *.userprefs
 *.usertasks
+*VENN-DESKTOP*
 
 #Mono Project Files
 *.pidb

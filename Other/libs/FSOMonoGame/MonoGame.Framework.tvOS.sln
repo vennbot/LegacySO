@@ -1,0 +1,32 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.22609.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGame.Framework.tvOS", "MonoGame.Framework\MonoGame.Framework.tvOS.csproj", "{E39CDABF-B0BD-65C0-2E46-72616D65776F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+		Ad-Hoc|iPhone = Ad-Hoc|iPhone
+		AppStore|iPhone = AppStore|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Debug|iPhone.Build.0 = Debug|iPhone
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Release|iPhone.ActiveCfg = Release|iPhone
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Release|iPhone.Build.0 = Release|iPhone
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{E39CDABF-B0BD-65C0-2E46-72616D65776F}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+EndGlobal
