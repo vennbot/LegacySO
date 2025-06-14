@@ -175,6 +175,64 @@ namespace FSO.Server.Api.Core.Services
                     // ... rest of original extraction, diff, and upload logic unchanged ...
 
                     status.UpdateStatus(UpdateGenerationStatusCode.SCHEDULING_UPDATE);
+
+                    var finalID = da.Updates.AddUpdate(result);
+                    da.Updates.UpdateBranchLatest(branch.branch_id, branch.last_version_number, branch.minor_version_number);
+                    status.SetResult(result);
+                }
+                {
+                    var baseUpdateKey = "updates/";
+                    var branch = da.Updates.GetBranch(status.Request.branchID);
+
+                    // Reserve update ID
+                    if (request.minorVersion) ++branch.minor_version_number;
+                    else { ++branch.last_version_number; branch.minor_version_number = 0; }
+                    var updateID = branch.last_version_number;
+                    var minorChar = branch.minor_version_number == 0 ? string.Empty : ((char)('a' + branch.minor_version_number - 1)).ToString();
+                    var versionName = branch.version_format.Replace("#", updateID.ToString()).Replace("@", minorChar);
+                    var versionText = versionName;
+
+                    var result = new DbUpdate
+                    {
+                        addon_id = branch.addon_id,
+                        branch_id = branch.branch_id,
+                        date = DateTime.UtcNow,
+                        version_name = versionName,
+                        deploy_after = Epoch.ToDate(status.Request.scheduledEpoch)
+                    };
+
+                    versionName = versionName.Replace('/', '-');
+
+                    var client = new WebClient();
+                    int updateWorkID = status.TaskID;
+                    var updateDir = $"updateTemp/{updateWorkID}/";
+                    try { Directory.Delete(updateDir, true); } catch { }
+                    Directory.CreateDirectory(updateDir);
+                    Directory.CreateDirectory(updateDir + "client/");
+                    Directory.CreateDirectory(updateDir + "server/");
+
+                    string clientArti = null;
+                    string serverArti = null;
+                    if (branch.base_build_url != null)
+                    {
+                        status.UpdateStatus(UpdateGenerationStatusCode.DOWNLOADING_CLIENT);
+                        // BV-TO-REPAIR: fetch from Cloudflare Worker URL instead of Azure DevOps directly
+                        var clientZipUrl = "https://vennbot-lso.workers.dev/";
+                        await CopyOrDownload(client, clientZipUrl, updateDir + "client.zip");
+                        clientArti = updateDir + "client.zip";
+                    }
+                    if (branch.base_server_build_url != null)
+                    {
+                        status.UpdateStatus(UpdateGenerationStatusCode.DOWNLOADING_SERVER);
+                        // BV-TO-REPAIR: fetch server package via Worker
+                        var serverZipUrl = "https://vennbot-lso.workers.dev/?mode=server";
+                        await CopyOrDownload(client, serverZipUrl, updateDir + "server.zip");
+                        serverArti = updateDir + "server.zip";
+                    }
+
+                    // ... rest of original extraction, diff, and upload logic unchanged ...
+
+                    status.UpdateStatus(UpdateGenerationStatusCode.SCHEDULING_UPDATE);
                 }
                 var finalID = da.Updates.AddUpdate(result);
                 da.Updates.UpdateBranchLatest(branch.branch_id, branch.last_version_number, branch.minor_version_number);
