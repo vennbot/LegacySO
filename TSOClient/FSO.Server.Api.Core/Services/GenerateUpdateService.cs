@@ -13,8 +13,11 @@
 
     Credit is retained for the original FreeSO project and its contributors.
 */
+using FSO.Files.Utils;
 using FSO.Server.Api.Core.Models;
+using FSO.Server.Common;
 using FSO.Server.Database.DA.Updates;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,8 +26,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using FSO.Files.Utils;
-using FSO.Server.Common;
 
 namespace FSO.Server.Api.Core.Services
 {
