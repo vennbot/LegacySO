@@ -1,20 +1,4 @@
-// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
-
-/*
-    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
-    Original Author(s): The FreeSO Development Team
-
-    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
-    - Adjusted to support self-hosted LegacySO servers.
-    - Modified to allow the LegacySO game client to connect to a predefined server by default.
-    - Gameplay logic changes for a balanced and fair experience.
-    - Updated references from "FreeSO" to "LegacySO" where appropriate.
-    - Other changes documented in commit history and project README.
-
-    Credit is retained for the original FreeSO project and its contributors.
-*/
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -188,7 +172,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
                                                   out Vector3[] tangents,
                                                   out Vector3[] bitangents)
         {
-            // Lengyel, Eric. ìComputing Tangent Space Basis Vectors for an Arbitrary Meshî. 
+            // Lengyel, Eric. ‚ÄúComputing Tangent Space Basis Vectors for an Arbitrary Mesh‚Äù. 
             // Terathon Software 3D Graphics Library, 2001.
             // http://www.terathon.com/code/tangent.html
 

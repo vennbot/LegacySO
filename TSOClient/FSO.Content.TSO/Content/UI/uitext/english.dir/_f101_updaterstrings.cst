@@ -58,7 +58,7 @@ Remember that you should only install updates and content packs from servers you
 29 ^ Manifest^
 
 30 ^Updater failed!^
-31 ^The updater could not be opened. If you have anti-virus software, try disabling real-time protection or adding an exception for FreeSO.exe and update.exe. If you still experience problems, open up update.exe from the LegacySO folder manually. (as administrator if you have installed in Program Files)
+31 ^The updater could not be opened. If you have anti-virus software, try disabling real-time protection or adding an exception for LegacySO.exe and update.exe. If you still experience problems, open up update.exe from the LegacySO folder manually. (as administrator if you have installed in Program Files)
 
 Error Message:
 %s^

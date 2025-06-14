@@ -7,7 +7,7 @@
     <ProjectGuid>{39201960-F96F-4039-84B1-1331D5DDE3C2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>FSO.Windows</RootNamespace>
-    <AssemblyName>FreeSO</AssemblyName>
+    <AssemblyName>LegacySO</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

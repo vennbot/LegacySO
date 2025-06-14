@@ -1,23 +1,7 @@
-// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-// If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
-
-/*
-    Original Source: FreeSO (https://github.com/riperiperi/FreeSO)
-    Original Author(s): The FreeSO Development Team
-
-    Modifications for LegacySO by Benjamin Venn (https://github.com/vennbot):
-    - Adjusted to support self-hosted LegacySO servers.
-    - Modified to allow the LegacySO game client to connect to a predefined server by default.
-    - Gameplay logic changes for a balanced and fair experience.
-    - Updated references from "FreeSO" to "LegacySO" where appropriate.
-    - Other changes documented in commit history and project README.
-
-    Credit is retained for the original FreeSO project and its contributors.
-*/
-#region License
+ï»¿#region License
 /*
 Microsoft Public License (Ms-PL)
-MonoGame - Copyright © 2009-2012 The MonoGame Team
+MonoGame - Copyright Â© 2009-2012 The MonoGame Team
 
 All rights reserved.
 
@@ -585,7 +569,7 @@ But the answer was still '42'.
             CheckFrames();
 		}
 
-        [TestCase("The rain in España stays mainly in the plain - now in français")]
+        [TestCase("The rain in EspaÃ±a stays mainly in the plain - now in franÃ§ais")]
         [TestCase("\x1f")]
         [TestCase("\x7f")]
         public void Throws_when_drawing_unavailable_characters(string text)
@@ -596,7 +580,7 @@ But the answer was still '42'.
             _spriteBatch.End ();
 		}
 
-        [TestCase('ñ')]
+        [TestCase('Ã±')]
         [TestCase((char)127)]
         [TestCase((char)31)]
         public void Throws_when_setting_unavailable_DefaultCharacter(char character)
