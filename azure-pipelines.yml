@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-2019'
+  name: 'default'
 
 variables:
   solution: './TSOClient/FreeSO.sln'
@@ -19,9 +19,17 @@ steps:
   submodules: recursive
   persistCredentials: true
 
-- powershell: cd ./Other/libs/FSOMonoGame/; ./protobuild.exe --generate; cd ../../../
+- task: PowerShell@2
   name: Protobuild
-  continueOnError: true
+  displayName: Protobuild
+  continueOnError: true    # this is optional once you ignore the exit code
+  inputs:
+    targetType: 'inline'
+    script: |
+      cd ./Other/libs/FSOMonoGame/
+      ./protobuild.exe --generate
+    ignoreLASTEXITCODE: true
+
 
 - task: NuGetToolInstaller@1
 
