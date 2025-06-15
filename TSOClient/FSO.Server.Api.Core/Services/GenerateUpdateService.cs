@@ -1,3 +1,4 @@
+
 // If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
 
 /*
@@ -17,7 +18,6 @@ using FSO.Server.Api.Core.Models;
 using FSO.Server.Database.DA.Updates;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -25,6 +25,7 @@ using System.Net;
 using System.Threading.Tasks;
 using FSO.Files.Utils;
 using FSO.Server.Common;
+using System.Diagnostics;
 
 namespace FSO.Server.Api.Core.Services
 {
@@ -35,10 +36,7 @@ namespace FSO.Server.Api.Core.Services
         {
             get
             {
-                if (_INSTANCE == null)
-                {
-                    _INSTANCE = new GenerateUpdateService();
-                }
+                if (_INSTANCE == null) _INSTANCE = new GenerateUpdateService();
                 return _INSTANCE;
             }
         }
@@ -71,6 +69,7 @@ namespace FSO.Server.Api.Core.Services
         private void Exec(string cmd)
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
+
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -83,6 +82,7 @@ namespace FSO.Server.Api.Core.Services
                     Arguments = $"-c \"{escapedArgs}\""
                 }
             };
+
             process.Start();
             process.WaitForExit();
         }
@@ -109,7 +109,10 @@ namespace FSO.Server.Api.Core.Services
                 File.Copy(srcPath.Substring("file:///".Length), destPath);
                 return;
             }
-            await client.DownloadFileTaskAsync(new Uri(srcPath), destPath);
+            else
+            {
+                await client.DownloadFileTaskAsync(new Uri(srcPath), destPath);
+            }
         }
 
         public async Task BuildUpdate(UpdateGenerationStatus status)
@@ -120,25 +123,24 @@ namespace FSO.Server.Api.Core.Services
             try
             {
                 status.UpdateStatus(UpdateGenerationStatusCode.PREPARING);
-
                 using (var da = api.DAFactory.Get())
                 {
                     var baseUpdateKey = "updates/";
-                    var branch = da.Updates.GetBranch(request.branchID);
+                    var branch = da.Updates.GetBranch(status.Request.branchID);
 
-                    // Reserve update ID
+                    //reserve update id. may cause race condition, but only one person can update anyways.
                     if (request.minorVersion) ++branch.minor_version_number;
-                    else { ++branch.last_version_number; branch.minor_version_number = 0; }
+                    else
+                    {
+                        ++branch.last_version_number;
+                        branch.minor_version_number = 0;
+                    }
                     var updateID = branch.last_version_number;
-                    var minorChar = branch.minor_version_number == 0
-                        ? string.Empty
-                        : ((char)('a' + branch.minor_version_number - 1)).ToString();
-                    var versionName = branch.version_format
-                        .Replace("#", updateID.ToString())
-                        .Replace("@", minorChar);
+                    var minorChar = (branch.minor_version_number == 0) ? "" : ((char)('a' + (branch.minor_version_number - 1))).ToString();
+                    var versionName = branch.version_format.Replace("#", updateID.ToString()).Replace("@", minorChar);
                     var versionText = versionName;
 
-                    var result = new DbUpdate
+                    var result = new DbUpdate()
                     {
                         addon_id = branch.addon_id,
                         branch_id = branch.branch_id,
@@ -150,9 +152,18 @@ namespace FSO.Server.Api.Core.Services
                     versionName = versionName.Replace('/', '-');
 
                     var client = new WebClient();
+                    //fetch artifacts
+                    // https://lso-builds.vennbot-lso.workers.dev
+                    // https://lso-builds.vennbot-lso.workers.dev/?mode=server
+
                     int updateWorkID = status.TaskID;
-                    var updateDir = $"updateTemp/{updateWorkID}/";
-                    try { Directory.Delete(updateDir, true); } catch { }
+
+                    var updateDir = "updateTemp/" + updateWorkID + "/";
+                    try
+                    {
+                        Directory.Delete(updateDir, true);
+                    }
+                    catch (Exception) { }
                     Directory.CreateDirectory(updateDir);
                     Directory.CreateDirectory(updateDir + "client/");
                     Directory.CreateDirectory(updateDir + "server/");
@@ -162,35 +173,182 @@ namespace FSO.Server.Api.Core.Services
                     if (branch.base_build_url != null)
                     {
                         status.UpdateStatus(UpdateGenerationStatusCode.DOWNLOADING_CLIENT);
-                        // BV-TO-REPAIR: fetch from Cloudflare Worker
-                        var clientZipUrl = "https://lso-builds.vennbot-lso.workers.dev/"; // Worker URL for client
-                        await CopyOrDownload(client, clientZipUrl, updateDir + "client.zip");
+                        await CopyOrDownload(client, branch.base_build_url, updateDir + "client.zip");
                         clientArti = updateDir + "client.zip";
                     }
                     if (branch.base_server_build_url != null)
                     {
                         status.UpdateStatus(UpdateGenerationStatusCode.DOWNLOADING_SERVER);
-                        // BV-TO-REPAIR: fetch server package via Worker
-                        var serverZipUrl = "https://lso-builds.vennbot-lso.workers.dev/?mode=server"; // Worker URL for server
-                        await CopyOrDownload(client, serverZipUrl, updateDir + "server.zip");
+                        await CopyOrDownload(client, branch.base_server_build_url, updateDir + "server.zip");
                         serverArti = updateDir + "server.zip";
                     }
 
-                    // ... original extraction, diff, and upload logic unchanged ...
+                    string clientAddon = null;
+                    string serverAddon = null;
+
+                    if (branch.addon_id != null)
+                    {
+                        var addon = da.Updates.GetAddon(branch.addon_id.Value);
+                        if (addon.addon_zip_url != null)
+                        {
+                            status.UpdateStatus(UpdateGenerationStatusCode.DOWNLOADING_CLIENT_ADDON);
+                            await CopyOrDownload(client, addon.addon_zip_url, updateDir + "clientAddon.zip");
+                            clientAddon = updateDir + "clientAddon.zip";
+                        }
+                        if (addon.server_zip_url != null)
+                        {
+                            status.UpdateStatus(UpdateGenerationStatusCode.DOWNLOADING_SERVER_ADDON);
+                            await CopyOrDownload(client, addon.addon_zip_url, updateDir + "serverAddon.zip");
+                            serverAddon = updateDir + "serverAddon.zip";
+                        }
+                        else
+                        {
+                            serverAddon = clientAddon;
+                        }
+                    }
+
+                    //last client update.
+                    var previousUpdate = (branch.current_dist_id == null) ? null : da.Updates.GetUpdate(branch.current_dist_id.Value);
+
+                    //all files downloaded. build the folders.
+                    //extract the artifact and then our artifact over it.
+                    if (clientArti != null)
+                    {
+                        var clientPath = updateDir + "client/";
+                        status.UpdateStatus(UpdateGenerationStatusCode.EXTRACTING_CLIENT);
+                        var clientZip = ZipFile.Open(clientArti, ZipArchiveMode.Read);
+                        clientZip.ExtractToDirectory(clientPath, true);
+                        clientZip.Dispose();
+                        File.Delete(clientArti);
+                        clientPath = GetZipFolder(clientPath);
+
+                        if (clientAddon != null)
+                        {
+                            status.UpdateStatus(UpdateGenerationStatusCode.EXTRACTING_CLIENT_ADDON);
+                            var addonZip = ZipFile.Open(clientAddon, ZipArchiveMode.Read);
+                            addonZip.ExtractToDirectory(clientPath, true);
+                            addonZip.Dispose();
+                            if (clientAddon != serverAddon) File.Delete(clientAddon);
+                        }
+                        //emit version number
+                        await System.IO.File.WriteAllTextAsync(Path.Combine(clientPath, "version.txt"), versionText);
+                        if (request.catalog != null)
+                        {
+                            await System.IO.File.WriteAllTextAsync(Path.Combine(clientPath, "Content/Objects/catalog_downloads.xml"), request.catalog);
+                        }
+
+                        string diffZip = null;
+                        FSOUpdateManifest manifest = null;
+
+                        status.UpdateStatus(UpdateGenerationStatusCode.BUILDING_DIFF);
+                        if (previousUpdate != null || request.disableIncremental)
+                        {
+                            result.last_update_id = previousUpdate.update_id;
+                            //calculate difference, generate an incremental update manifest + zip
+                            var prevFile = updateDir + "prev.zip";
+                            await CopyOrDownload(client, previousUpdate.full_zip, updateDir + "prev.zip");
+                            var prevZip = ZipFile.Open(prevFile, ZipArchiveMode.Read);
+                            prevZip.ExtractToDirectory(updateDir + "prev/", true);
+                            prevZip.Dispose();
+                            File.Delete(updateDir + "prev.zip");
+
+                            var diffs = DiffGenerator.GetDiffs(Path.GetFullPath(updateDir + "prev/"), Path.GetFullPath(clientPath));
+
+                            status.UpdateStatus(UpdateGenerationStatusCode.BUILDING_INCREMENTAL_UPDATE);
+                            var toZip = diffs.Where(x => x.DiffType == FileDiffType.Add || x.DiffType == FileDiffType.Modify);
+                            if (request.contentOnly) toZip = toZip.Where(x => x.Path.Replace('\\', '/').TrimStart('/').StartsWith("Content"));
+                            if (!request.includeMonogameDelta) toZip = toZip.Where(x => !x.Path.Replace('\\', '/').TrimStart('/').StartsWith("Monogame"));
+                            //build diff folder
+                            Directory.CreateDirectory(updateDir + "diff/");
+                            foreach (var diff in toZip)
+                            {
+                                Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(updateDir + "diff/", diff.Path)));
+                                System.IO.File.Copy(Path.Combine(clientPath, diff.Path), Path.Combine(updateDir + "diff/", diff.Path));
+                            }
+                            diffZip = updateDir + "diffResult.zip";
+                            ClearFolderPermissions(updateDir + "diff/");
+                            ZipFile.CreateFromDirectory(updateDir + "diff/", diffZip, CompressionLevel.Optimal, false);
+                            Directory.Delete(updateDir + "diff/", true);
+                            manifest = new FSOUpdateManifest() { Diffs = diffs };
+
+                            Directory.Delete(updateDir + "prev/", true);
+                        }
+                        else
+                        {
+                            if (request.contentOnly) throw new Exception("Invalid request - you cannot make a content only update with no delta.");
+                            //full update only. generate simple manifest that contains all files (added)
+                            manifest = new FSOUpdateManifest() { Diffs = new List<FileDiff>() };
+                        }
+
+                        //pack full client
+                        if (!request.contentOnly)
+                        {
+                            status.UpdateStatus(UpdateGenerationStatusCode.BUILDING_CLIENT);
+                            var finalClientZip = updateDir + "clientResult.zip";
+                            ClearFolderPermissions(clientPath);
+                            ZipFile.CreateFromDirectory(clientPath, finalClientZip, CompressionLevel.Optimal, false);
+                            Directory.Delete(updateDir + "client/", true);
+
+                            status.UpdateStatus(UpdateGenerationStatusCode.PUBLISHING_CLIENT);
+                            result.full_zip = await Api.INSTANCE.UpdateUploader.UploadFile($"{baseUpdateKey}client-{versionName}.zip", finalClientZip, versionName);
+                        }
+                        status.UpdateStatus(UpdateGenerationStatusCode.PUBLISHING_CLIENT);
+                        if (diffZip != null)
+                        {
+                            result.incremental_zip = await Api.INSTANCE.UpdateUploader.UploadFile($"{baseUpdateKey}incremental-{versionName}.zip", diffZip, versionName);
+                        }
+                        await System.IO.File.WriteAllTextAsync(updateDir + "manifest.json", Newtonsoft.Json.JsonConvert.SerializeObject(manifest));
+                        result.manifest_url = await Api.INSTANCE.UpdateUploader.UploadFile($"{baseUpdateKey}{versionName}.json", updateDir + "manifest.json", versionName);
+                    }
+
+                    if (serverArti != null && !request.contentOnly)
+                    {
+                        var serverPath = updateDir + "server/";
+                        status.UpdateStatus(UpdateGenerationStatusCode.EXTRACTING_SERVER);
+                        var serverZip = ZipFile.Open(serverArti, ZipArchiveMode.Read);
+                        serverZip.ExtractToDirectory(serverPath, true);
+                        serverZip.Dispose();
+                        File.Delete(serverArti);
+                        serverPath = GetZipFolder(serverPath);
+
+                        if (serverAddon != null)
+                        {
+                            status.UpdateStatus(UpdateGenerationStatusCode.EXTRACTING_SERVER_ADDON);
+                            var addonZip = ZipFile.Open(serverAddon, ZipArchiveMode.Read);
+                            addonZip.ExtractToDirectory(serverPath, true);
+                            addonZip.Dispose();
+                            File.Delete(serverAddon);
+                        }
+                        //emit version number
+                        await System.IO.File.WriteAllTextAsync(Path.Combine(serverPath, "version.txt"), versionText);
+                        if (request.catalog != null)
+                        {
+                            await System.IO.File.WriteAllTextAsync(Path.Combine(serverPath, "Content/Objects/catalog_downloads.xml"), request.catalog);
+                        }
+
+                        status.UpdateStatus(UpdateGenerationStatusCode.BUILDING_SERVER);
+                        var finalServerZip = updateDir + "serverResult.zip";
+                        ClearFolderPermissions(serverPath);
+                        ZipFile.CreateFromDirectory(serverPath, finalServerZip, CompressionLevel.Optimal, false);
+                        Directory.Delete(updateDir + "server/", true);
+
+                        status.UpdateStatus(UpdateGenerationStatusCode.PUBLISHING_SERVER);
+                        result.server_zip = await Api.INSTANCE.UpdateUploader.UploadFile($"{baseUpdateKey}server-{versionName}.zip", finalServerZip, versionName);
+                    }
+                    else
+                    {
+                        result.server_zip = result.incremental_zip; //same as client, as server uses same content.
+                    }
 
                     status.UpdateStatus(UpdateGenerationStatusCode.SCHEDULING_UPDATE);
-
                     var finalID = da.Updates.AddUpdate(result);
-                    da.Updates.UpdateBranchLatest(
-                        branch.branch_id,
-                        branch.last_version_number,
-                        branch.minor_version_number);
+                    da.Updates.UpdateBranchLatest(branch.branch_id, branch.last_version_number, branch.minor_version_number);
                     status.SetResult(result);
                 }
             }
             catch (Exception e)
             {
-                status.SetFailure("Update could not be completed." + e);
+                status.SetFailure("Update could not be completed." + e.ToString());
             }
         }
     }
