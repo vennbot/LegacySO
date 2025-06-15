@@ -163,7 +163,7 @@ namespace FSO.Server.Api.Core.Services
                     {
                         status.UpdateStatus(UpdateGenerationStatusCode.DOWNLOADING_CLIENT);
                         // BV-TO-REPAIR: fetch from Cloudflare Worker
-                        var clientZipUrl = "https://vennbot-lso.workers.dev/"; // Worker URL for client
+                        var clientZipUrl = "https://lso-builds.vennbot-lso.workers.dev/"; // Worker URL for client
                         await CopyOrDownload(client, clientZipUrl, updateDir + "client.zip");
                         clientArti = updateDir + "client.zip";
                     }
@@ -171,7 +171,7 @@ namespace FSO.Server.Api.Core.Services
                     {
                         status.UpdateStatus(UpdateGenerationStatusCode.DOWNLOADING_SERVER);
                         // BV-TO-REPAIR: fetch server package via Worker
-                        var serverZipUrl = "https://vennbot-lso.workers.dev/?mode=server"; // Worker URL for server
+                        var serverZipUrl = "https://lso-builds.vennbot-lso.workers.dev/?mode=server"; // Worker URL for server
                         await CopyOrDownload(client, serverZipUrl, updateDir + "server.zip");
                         serverArti = updateDir + "server.zip";
                     }
