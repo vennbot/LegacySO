@@ -1,4 +1,3 @@
-
 // If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0.
 
 /*
@@ -68,7 +67,6 @@ namespace FSO.Server.Watchdog
                 {
                     Console.WriteLine("Unhandled exception occurred!");
                     Console.WriteLine(e.ToString());
-                    e.ToString();
                 }
                 AppDomain.Unload(childDomain);
 
@@ -83,10 +81,7 @@ namespace FSO.Server.Watchdog
                             Update(new string[0]); break;
                     }
                 }
-                return result; 
-                //was trying to do something smart here with appdomains to reload the app without closing it
-                //but it breaks mono... so to loop running the application you need to use a shell script.
-                //just loop while this watcher doesn't return 2 (shutdown)
+                return result;
             }
             return 0;
         }
@@ -102,7 +97,7 @@ namespace FSO.Server.Watchdog
             if (url != null)
             {
                 string contents;
-                using (var wc = new System.Net.WebClient())
+                using (var wc = new WebClient())
                     contents = wc.DownloadString(url);
                 var doc = new XmlDocument();
                 doc.LoadXml(contents);
@@ -126,33 +121,58 @@ namespace FSO.Server.Watchdog
                 if (Directory.Exists("selfUpdate/")) Directory.Delete("selfUpdate/", true);
                 Directory.CreateDirectory("selfUpdate/");
                 Console.WriteLine("Downloading artifacts...");
+
+                // Force TLS1.2 for GitHub
+                System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
                 var client = new WebClient();
                 client.DownloadFileCompleted += (sender, evt) =>
                 {
-                    var file = "selfUpdate/artifact.zip";
-                    Console.WriteLine("Extracting " + file + "...");
-                    var archive = ZipFile.OpenRead(file);
-                    var entries = archive.Entries;
-                    foreach (var entry in entries)
+                    if (evt.Error != null)
                     {
-                        var targPath = Path.Combine("./", entry.FullName);
-                        if (File.Exists(targPath) && IgnoreFiles.Contains(entry.FullName)) continue;
-                        Directory.CreateDirectory(Path.GetDirectoryName(targPath));
-                        try
-                        {
-                            entry.ExtractToFile(targPath, true);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("Could not replace " + targPath + "!");
-                        }
+                        Console.WriteLine($"[Self-Update][Error] {evt.Error.GetType().Name}: {evt.Error.Message}");
+                        wait.Set();
+                        return;
                     }
-                    archive.Dispose();
-                    Directory.Delete("selfUpdate/", true);
-                    Console.WriteLine("Update Complete!");
-                    wait.Set();
+                    if (evt.Cancelled)
+                    {
+                        Console.WriteLine("[Self-Update] download cancelled");
+                        wait.Set();
+                        return;
+                    }
+
+                    var file = "selfUpdate/artifact.zip";
+                    var length = new FileInfo(file).Length;
+                    Console.WriteLine($"[Self-Update] Download succeeded, {length} bytes");
+
+                    Console.WriteLine($"Extracting {file}...");
+                    try
+                    {
+                        using (var archive = ZipFile.OpenRead(file))
+                        {
+                            foreach (var entry in archive.Entries)
+                            {
+                                var targPath = Path.Combine("./", entry.FullName);
+                                if (File.Exists(targPath) && IgnoreFiles.Contains(entry.FullName)) continue;
+                                Directory.CreateDirectory(Path.GetDirectoryName(targPath));
+                                try { entry.ExtractToFile(targPath, true); }
+                                catch (Exception e) { Console.WriteLine($"Could not replace {targPath}: {e.Message}"); }
+                            }
+                        }
+                        Console.WriteLine("Self-update extraction complete.");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"[Self-Update][ExtractError] {e.GetType().Name}: {e.Message}");
+                    }
+                    finally
+                    {
+                        try { Directory.Delete("selfUpdate/", true); } catch { }
+                        wait.Set();
+                    }
                 };
 
+                Console.WriteLine($"[Self-Update] Downloading from: {url}");
                 client.DownloadFileAsync(new Uri(url), "selfUpdate/artifact.zip");
                 wait.WaitOne();
             }
@@ -191,21 +211,17 @@ namespace FSO.Server.Watchdog
                     Console.WriteLine("Fetching update from " + config.TeamCityUrl + "/" + config.TeamCityProject + "...");
                     url = new Uri(GetTeamcityLatestURL());
                     Console.WriteLine("(specifically " + url.ToString() + ")");
-                    //var baseUri = new Uri(config.TeamCityUrl);
-                    //if (!Uri.TryCreate(baseUri, "guestAuth/downloadArtifacts.html?buildTypeId=" + config.TeamCityProject + "&buildId=lastSuccessful", out url))
-                    //    url = null;
                 }
 
                 using (var file = File.Open("updateUrl.txt", FileMode.Create, FileAccess.Write))
+                using (var writer = new StreamWriter(file))
                 {
-                    var writer = new StreamWriter(file);
                     writer.WriteLine(url.ToString().Replace(":id/server-", ":id/client-"));
-                    writer.Close();
                 }
-                
+
                 if (url != null)
                 {
-                    DownloadAndExtractAll(new string[] { url.AbsoluteUri });
+                    DownloadAndExtractAll(new[] { url.AbsoluteUri });
                 }
             }
         }
